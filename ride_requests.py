@@ -45,18 +45,17 @@ def generate_ride_request(passenger_id):
     }
 
 # Produce events to Kafka topic
-def produce_ride_requests(bootstrap_servers="140.119.164.16:9092", topic="ride-requests", duration=30):
+def produce_ride_requests(bootstrap_servers="140.119.164.16:9092", topic="ride-requests", duration=3000000000):
     producer = KafkaProducer(
         bootstrap_servers=bootstrap_servers,
         value_serializer=lambda v: json.dumps(v, ensure_ascii=False).encode("utf-8")
     )
 
     print("[Producer] Starting ride request simulation...")
-    start = time.time()
     counter = 0
 
     try:
-        while (time.time() - start) < duration:
+        while True:  # Runs forever
             for pid in passenger_pool:
                 event = generate_ride_request(pid)
                 producer.send(topic, event)
